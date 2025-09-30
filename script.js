@@ -504,6 +504,9 @@ class SnakeGame {
         this.touchStartX = 0;
         this.touchStartY = 0;
 
+        // Best score tracking
+        this.recordBroken = false;
+
         this.init();
     }
 
@@ -567,12 +570,17 @@ class SnakeGame {
 
     checkAndUpdateBestScore() {
         if (this.score > this.bestScore) {
+            // Only show achievement ONCE when record is first broken
+            if (!this.recordBroken) {
+                this.showAchievement('🏆 NOWY REKORD! 🏆', `${this.score} PUNKTÓW`);
+                this.recordBroken = true;
+            }
+
             this.bestScore = this.score;
             this.saveBestScore();
             this.updateBestScoreDisplay();
 
-            // NEW RECORD animation!
-            this.showAchievement('🏆 NOWY REKORD! 🏆', `${this.bestScore} PUNKTÓW`);
+            // Animation for best score display
             this.bestScoreElement.parentElement.classList.add('score-animate');
             setTimeout(() => {
                 this.bestScoreElement.parentElement.classList.remove('score-animate');
@@ -720,6 +728,7 @@ class SnakeGame {
         this.gameState = 'playing';
         this.gameOverlay.style.display = 'none';
         this.score = 0;
+        this.recordBroken = false; // Reset record broken flag
         this.updateScore();
         this.snake = [{ x: 10, y: 10 }];
         this.dx = 1;
