@@ -437,6 +437,9 @@ class SnakeGame {
         // Detect mobile
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
+        // Detect orientation
+        this.currentOrientation = this.detectOrientation();
+
         // Resize canvas for mobile
         this.resizeCanvas();
 
@@ -510,6 +513,31 @@ class SnakeGame {
         this.init();
     }
 
+    detectOrientation() {
+        return window.matchMedia('(orientation: landscape)').matches ? 'landscape' : 'portrait';
+    }
+
+    handleOrientationChange() {
+        const newOrientation = this.detectOrientation();
+
+        if (newOrientation !== this.currentOrientation) {
+            this.currentOrientation = newOrientation;
+
+            if (this.isMobile) {
+                this.resizeCanvas();
+                this.tileCount = {
+                    x: Math.floor(this.canvas.width / this.gridSize),
+                    y: Math.floor(this.canvas.height / this.gridSize)
+                };
+
+                // Regenerate food if outside new bounds
+                if (this.food.x >= this.tileCount.x || this.food.y >= this.tileCount.y) {
+                    this.generateFood();
+                }
+            }
+        }
+    }
+
     resizeCanvas() {
         if (this.isMobile) {
             const container = document.querySelector('.game-area');
@@ -545,13 +573,20 @@ class SnakeGame {
 
         // Resize on orientation change
         window.addEventListener('resize', () => {
-            if (this.isMobile) {
-                this.resizeCanvas();
-                this.tileCount = {
-                    x: Math.floor(this.canvas.width / this.gridSize),
-                    y: Math.floor(this.canvas.height / this.gridSize)
-                };
-            }
+            this.handleOrientationChange();
+        });
+
+        // Orientation change event (mobile specific)
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.handleOrientationChange();
+            }, 100);
+        });
+
+        // Detect orientation change via matchMedia
+        const orientationQuery = window.matchMedia('(orientation: landscape)');
+        orientationQuery.addEventListener('change', () => {
+            this.handleOrientationChange();
         });
     }
 

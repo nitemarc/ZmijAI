@@ -541,6 +541,10 @@ body::before {
 
 /* Landscape mode mobile */
 @media (max-width: 926px) and (orientation: landscape) {
+    body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
     .game-container {
         padding: 0.3rem;
         margin: 0.3rem;
@@ -555,19 +559,28 @@ body::before {
         font-size: 1.2rem;
     }
 
-    .score-display {
+    .scores-container {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .score-display, .best-score-display {
         padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
     }
 
     .controls-info {
         font-size: 0.7rem;
     }
 
+    /* D-Pad po prawej stronie, wycentrowany pionowo */
     .virtual-dpad {
         width: 120px;
         height: 120px;
-        bottom: 10px;
+        bottom: auto;
+        top: 50%;
         right: 10px;
+        transform: translateY(-50%);
     }
 
     .dpad-btn {
@@ -582,6 +595,11 @@ body::before {
 
     .dpad-left, .dpad-right {
         top: 40px;
+    }
+
+    /* Większy canvas w landscape */
+    #gameCanvas {
+        max-height: calc(100vh - 120px);
     }
 }
 
