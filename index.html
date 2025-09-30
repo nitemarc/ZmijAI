@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ŻmijAI - Klasyczna Gra Wąż</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>ŻmijAI</h1>
+            <div class="score-display">
+                <span class="score-label">Wynik:</span>
+                <span class="score-value" id="score">0</span>
+            </div>
+        </header>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+            
+            <div class="game-overlay" id="gameOverlay">
+                <div class="start-screen" id="startScreen">
+                    <h2>Witaj w ŻmijAI!</h2>
+                    <p>Steruj wężem używając klawiszy WSAD lub strzałek</p>
+                    <p>Zjedz jak najwięcej serduszek!</p>
+                    <button class="start-button" id="startButton">Rozpocznij Grę</button>
+                </div>
+                
+                <div class="game-over-screen" id="gameOverScreen" style="display: none;">
+                    <h2>Koniec Gry!</h2>
+                    <p>Twój wynik: <span id="finalScore">0</span></p>
+                    <button class="restart-button" id="restartButton">Zagraj Ponownie</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            <div class="control-group desktop-only">
+                <span class="control-key">W A S D</span>
+                <span class="control-desc">lub</span>
+                <span class="control-key">← ↑ ↓ →</span>
+                <span class="control-desc">do sterowania</span>
+            </div>
+            <div class="control-group mobile-only">
+                <span class="control-desc">Przesuwaj palcem aby sterować</span>
+            </div>
+            <div class="hashtags">
+                #ilovemkt #poznan #iloveai
+            </div>
+        </div>
+    </div>
+
+    <!-- Virtual D-Pad for mobile -->
+    <div id="virtualDPad" class="virtual-dpad">
+        <button class="dpad-btn dpad-up" data-direction="up">▲</button>
+        <button class="dpad-btn dpad-down" data-direction="down">▼</button>
+        <button class="dpad-btn dpad-left" data-direction="left">◀</button>
+        <button class="dpad-btn dpad-right" data-direction="right">▶</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,634 @@
+/* Import Google Fonts for retro-modern look */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Space Mono', monospace;
+    background: linear-gradient(135deg, #6B6B6B 0%, #4A4A4A 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Animated background particles canvas */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Animated gradient background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #6B6B6B 0%, #4A4A4A 50%, #6B6B6B 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -1;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 100px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+    z-index: 10;
+    animation: containerFloat 6s ease-in-out infinite;
+}
+
+@keyframes containerFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    color: #4a5568;
+}
+
+.game-header h1 {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: #000000;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.05);
+    animation: titlePulse 3s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #FFD700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.3);
+    animation: scorePulse 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.score-display::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: scoreShine 3s linear infinite;
+}
+
+@keyframes scorePulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.3); }
+    50% { transform: scale(1.03); box-shadow: 0 4px 20px rgba(255, 215, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes scoreShine {
+    0% { transform: rotate(0deg) translate(-100%, -100%); }
+    100% { transform: rotate(0deg) translate(100%, 100%); }
+}
+
+.score-label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #000000;
+    position: relative;
+    z-index: 1;
+}
+
+.score-value {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #000000;
+    min-width: 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.game-area {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+#gameCanvas {
+    border: 3px solid #4a5568;
+    border-radius: 12px;
+    background: #1a202c;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 50px rgba(74, 85, 104, 0.2);
+    position: relative;
+}
+
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.start-screen, .game-over-screen {
+    text-align: center;
+    color: white;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    animation: screenSlideIn 0.5s ease-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes screenSlideIn {
+    from {
+        transform: translateY(-30px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.start-screen h2, .game-over-screen h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #DC143C, #FF6347, #DC143C);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientText 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(220, 20, 60, 0.5));
+}
+
+@keyframes gradientText {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.start-screen p, .game-over-screen p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+}
+
+.start-button, .restart-button {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4), 0 0 30px rgba(220, 20, 60, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.start-button::before, .restart-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.start-button:hover::before, .restart-button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.start-button:hover, .restart-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 35px rgba(220, 20, 60, 0.7), 0 0 50px rgba(220, 20, 60, 0.4);
+    background: linear-gradient(135deg, #8B0000 0%, #4A0000 100%);
+}
+
+.start-button:active, .restart-button:active {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 5px 20px rgba(220, 20, 60, 0.6);
+}
+
+.controls-info {
+    text-align: center;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.control-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.control-key {
+    background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3), 0 0 15px rgba(220, 20, 60, 0.2);
+    animation: controlKeyPulse 2s ease-in-out infinite;
+}
+
+@keyframes controlKeyPulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3), 0 0 15px rgba(220, 20, 60, 0.2); }
+    50% { box-shadow: 0 2px 10px rgba(220, 20, 60, 0.5), 0 0 20px rgba(220, 20, 60, 0.3); }
+}
+
+.control-desc {
+    color: #718096;
+    font-weight: 400;
+}
+
+/* Mobile visibility helpers */
+.desktop-only {
+    display: flex;
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* Virtual D-Pad */
+.virtual-dpad {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+    z-index: 1000;
+}
+
+.dpad-btn {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4), 0 0 30px rgba(220, 20, 60, 0.2);
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.dpad-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 2px 10px rgba(220, 20, 60, 0.6);
+}
+
+.dpad-up {
+    top: 0;
+    left: 50px;
+}
+
+.dpad-down {
+    bottom: 0;
+    left: 50px;
+}
+
+.dpad-left {
+    left: 0;
+    top: 50px;
+}
+
+.dpad-right {
+    right: 0;
+    top: 50px;
+}
+
+/* Responsive design - MOBILE FIRST */
+@media (max-width: 768px) {
+    body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: flex !important;
+    }
+
+    .virtual-dpad {
+        display: block;
+    }
+
+    .game-container {
+        padding: 0.5rem;
+        margin: 0.5rem;
+        width: calc(100vw - 1rem);
+        max-width: 100%;
+        max-height: none;
+    }
+
+    .game-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .game-header h1 {
+        font-size: 1.5rem;
+    }
+
+    #gameCanvas {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+        border-width: 2px;
+    }
+
+    .score-display {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+    }
+
+    .score-value {
+        font-size: 1.1rem;
+    }
+
+    .control-group {
+        font-size: 0.8rem;
+    }
+
+    .control-key {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .start-screen, .game-over-screen {
+        padding: 1rem;
+        max-width: 90%;
+    }
+
+    .start-screen h2, .game-over-screen h2 {
+        font-size: 1.5rem;
+    }
+
+    .start-screen p, .game-over-screen p {
+        font-size: 0.9rem;
+    }
+
+    .start-button, .restart-button {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+
+    .hashtags {
+        font-size: 0.85rem;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 375px) {
+    .game-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .score-display {
+        padding: 0.4rem 0.8rem;
+    }
+
+    .virtual-dpad {
+        width: 130px;
+        height: 130px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .dpad-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+
+    .dpad-up, .dpad-down {
+        left: 42.5px;
+    }
+
+    .dpad-left, .dpad-right {
+        top: 42.5px;
+    }
+}
+
+/* Landscape mode mobile */
+@media (max-width: 926px) and (orientation: landscape) {
+    .game-container {
+        padding: 0.3rem;
+        margin: 0.3rem;
+    }
+
+    .game-header {
+        flex-direction: row;
+        margin-bottom: 0.3rem;
+    }
+
+    .game-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .score-display {
+        padding: 0.3rem 0.8rem;
+    }
+
+    .controls-info {
+        font-size: 0.7rem;
+    }
+
+    .virtual-dpad {
+        width: 120px;
+        height: 120px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .dpad-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .dpad-up, .dpad-down {
+        left: 40px;
+    }
+
+    .dpad-left, .dpad-right {
+        top: 40px;
+    }
+}
+
+/* Animation for score changes */
+.score-animate {
+    animation: scoreGlow 0.4s ease-in-out !important;
+}
+
+@keyframes scoreGlow {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.15) rotate(-2deg); }
+    75% { transform: scale(1.15) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Pulse animation for game elements */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.pulse {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* Hashtags styling */
+.hashtags {
+    margin-top: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+/* Screen crack effect */
+@keyframes screenCrack {
+    0% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        filter: brightness(1);
+    }
+    10% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        filter: brightness(2);
+    }
+    20% {
+        clip-path: polygon(
+            0 0, 48% 0, 50% 5%, 52% 0, 100% 0,
+            100% 48%, 95% 50%, 100% 52%, 100% 100%,
+            52% 100%, 50% 95%, 48% 100%, 0 100%,
+            0 52%, 5% 50%, 0 48%
+        );
+        filter: brightness(1) contrast(1.5);
+    }
+    100% {
+        clip-path: polygon(
+            0 0, 48% 0, 50% 5%, 52% 0, 100% 0,
+            100% 48%, 95% 50%, 100% 52%, 100% 100%,
+            52% 100%, 50% 95%, 48% 100%, 0 100%,
+            0 52%, 5% 50%, 0 48%
+        );
+        filter: brightness(0.7) contrast(1.2);
+    }
+}
+
+.screen-crack {
+    animation: screenCrack 0.5s ease-out forwards;
+}
+
+/* Glitch effect */
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        filter: hue-rotate(0deg);
+    }
+    20% {
+        transform: translate(-5px, 5px);
+        filter: hue-rotate(90deg);
+    }
+    40% {
+        transform: translate(5px, -5px);
+        filter: hue-rotate(180deg);
+    }
+    60% {
+        transform: translate(-5px, -5px);
+        filter: hue-rotate(270deg);
+    }
+    80% {
+        transform: translate(5px, 5px);
+        filter: hue-rotate(360deg);
+    }
+    100% {
+        transform: translate(0);
+        filter: hue-rotate(0deg);
+    }
+}
+
+.glitch {
+    animation: glitch 0.3s ease-in-out;
+}
