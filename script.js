@@ -39,13 +39,14 @@ class BackgroundParticles {
     createMatrixRain() {
         const fontSize = 14;
         const columns = Math.floor(this.canvas.width / fontSize);
+        const chars = "I♥AI";
 
         for (let i = 0; i < columns; i++) {
             this.matrixColumns.push({
                 x: i * fontSize,
                 y: Math.random() * this.canvas.height,
                 speed: Math.random() * 3 + 2,
-                chars: [],
+                char: chars[Math.floor(Math.random() * chars.length)], // Each column gets one fixed char
                 opacity: Math.random() * 0.3 + 0.1
             });
         }
@@ -67,14 +68,12 @@ class BackgroundParticles {
     }
 
     drawMatrixRain() {
-        const chars = '01アイウエオカキクケコサシスセソタチツテト';
+        // Each column displays its assigned character
         this.ctx.font = '14px monospace';
 
         this.matrixColumns.forEach(column => {
-            const char = chars[Math.floor(Math.random() * chars.length)];
-
             this.ctx.fillStyle = `rgba(0, 255, 150, ${column.opacity})`;
-            this.ctx.fillText(char, column.x, column.y);
+            this.ctx.fillText(column.char, column.x, column.y);
 
             column.y += column.speed;
 
@@ -444,7 +443,7 @@ class SnakeGame {
         this.resizeCanvas();
 
         // Game settings
-        this.gridSize = 20; // Always 20px for readability
+        this.gridSize = this.isMobile ? 20 : 22; // Mobile: 20px, Desktop: 22px for better visibility
         this.tileCount = {
             x: Math.floor(this.canvas.width / this.gridSize),
             y: Math.floor(this.canvas.height / this.gridSize)
@@ -552,8 +551,9 @@ class SnakeGame {
             this.canvas.width = canvasSize;
             this.canvas.height = canvasSize;
         } else {
-            this.canvas.width = 600;
-            this.canvas.height = 400;
+            // Desktop: 660x440px (30x20 tiles at 22px each)
+            this.canvas.width = 660;
+            this.canvas.height = 440;
         }
     }
 
@@ -574,10 +574,10 @@ class SnakeGame {
         if (warning) {
             warning.style.display = 'none';
         }
-        // Show D-Pad
+        // Show D-Pad only on mobile
         const dpad = document.getElementById('virtualDPad');
-        if (dpad) {
-            dpad.style.display = 'grid';
+        if (dpad && this.isMobile) {
+            dpad.style.display = 'block';
         }
     }
 
@@ -964,6 +964,17 @@ class SnakeGame {
                         Math.random() * this.canvas.height / 2
                     );
                 }, i * 200);
+            }
+        } else if (this.score === 250) {
+            this.showAchievement('🐐 WELCOME TO POZNAN! 🐐', '250 POINTS');
+            // Special fireworks for Poznan!
+            for (let i = 0; i < 7; i++) {
+                setTimeout(() => {
+                    this.particleSystem.createFirework(
+                        Math.random() * this.canvas.width,
+                        Math.random() * this.canvas.height
+                    );
+                }, i * 150);
             }
         }
     }

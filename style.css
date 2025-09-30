@@ -60,7 +60,6 @@ body::before {
     max-height: 90vh;
     position: relative;
     z-index: 10;
-    animation: containerFloat 6s ease-in-out infinite;
 }
 
 @keyframes containerFloat {
@@ -677,12 +676,42 @@ body::before {
 }
 
 /* Hashtags styling */
-.hashtags {
+.hashtags-container {
     margin-top: 1rem;
-    font-weight: 600;
-    color: #4a5568;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.hashtag {
+    font-weight: 700;
+    color: #fff;
     font-size: 0.95rem;
     letter-spacing: 0.5px;
+    background: #DC143C;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.6),
+                0 0 40px rgba(220, 20, 60, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    animation: hashtagGlow 2s ease-in-out infinite;
+}
+
+@keyframes hashtagGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(220, 20, 60, 0.6),
+                    0 0 40px rgba(220, 20, 60, 0.4),
+                    inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(220, 20, 60, 0.8),
+                    0 0 60px rgba(220, 20, 60, 0.6),
+                    inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
 }
 
 /* Screen crack effect */
