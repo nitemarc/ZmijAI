@@ -426,6 +426,7 @@ class SnakeGame {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.scoreElement = document.getElementById('score');
+        this.bestScoreElement = document.getElementById('bestScore');
         this.finalScoreElement = document.getElementById('finalScore');
         this.startScreen = document.getElementById('startScreen');
         this.gameOverScreen = document.getElementById('gameOverScreen');
@@ -449,6 +450,7 @@ class SnakeGame {
         // Game state
         this.gameState = 'start'; // 'start', 'playing', 'gameOver'
         this.score = 0;
+        this.bestScore = this.loadBestScore();
         this.gameSpeed = 150; // milliseconds between moves
         this.lastMoveTime = 0;
 
@@ -535,6 +537,7 @@ class SnakeGame {
         this.bindTouchControls();
         this.bindVirtualDPad();
         this.generateFood();
+        this.updateBestScoreDisplay();
         this.gameLoop();
 
         // Resize on orientation change
@@ -547,6 +550,34 @@ class SnakeGame {
                 };
             }
         });
+    }
+
+    loadBestScore() {
+        const saved = localStorage.getItem('zmijAI_bestScore');
+        return saved ? parseInt(saved, 10) : 0;
+    }
+
+    saveBestScore() {
+        localStorage.setItem('zmijAI_bestScore', this.bestScore.toString());
+    }
+
+    updateBestScoreDisplay() {
+        this.bestScoreElement.textContent = this.bestScore;
+    }
+
+    checkAndUpdateBestScore() {
+        if (this.score > this.bestScore) {
+            this.bestScore = this.score;
+            this.saveBestScore();
+            this.updateBestScoreDisplay();
+
+            // NEW RECORD animation!
+            this.showAchievement('🏆 NOWY REKORD! 🏆', `${this.bestScore} PUNKTÓW`);
+            this.bestScoreElement.parentElement.classList.add('score-animate');
+            setTimeout(() => {
+                this.bestScoreElement.parentElement.classList.remove('score-animate');
+            }, 400);
+        }
     }
 
     bindTouchControls() {
@@ -811,6 +842,9 @@ class SnakeGame {
         setTimeout(() => {
             this.scoreElement.parentElement.classList.remove('score-animate');
         }, 300);
+
+        // Check for new best score
+        this.checkAndUpdateBestScore();
     }
 
     updateCombo() {
