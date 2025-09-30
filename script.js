@@ -453,17 +453,18 @@ class SnakeGame {
         this.gameState = 'start'; // 'start', 'playing', 'gameOver'
         this.score = 0;
         this.bestScore = this.loadBestScore();
-        this.gameSpeed = 150; // milliseconds between moves
+        this.gameSpeed = this.isMobile ? 200 : 150; // Slower on mobile for better control
         this.lastMoveTime = 0;
 
         // Message to display on snake segments
         this.MESSAGE = "I ♥ MARKETING & TECHNOLOGY, POZNAN 30.10.2025, I ♥ AI, ";
 
-        // Snake properties
+        // Snake properties - start at left center, moving right
+        const startY = Math.floor(this.tileCount.y / 2);
         this.snake = [
-            { x: 10, y: 10 }
+            { x: 2, y: startY }
         ];
-        this.dx = 0;
+        this.dx = 1; // Start moving right immediately
         this.dy = 0;
         this.nextDirection = null;
 
@@ -784,12 +785,15 @@ class SnakeGame {
         this.score = 0;
         this.recordBroken = false; // Reset record broken flag
         this.updateScore();
-        this.snake = [{ x: 10, y: 10 }];
+
+        // Start at left center, moving right
+        const startY = Math.floor(this.tileCount.y / 2);
+        this.snake = [{ x: 2, y: startY }];
         this.dx = 1;
         this.dy = 0;
         this.nextDirection = null;
         this.generateFood();
-        this.gameSpeed = 150;
+        this.gameSpeed = this.isMobile ? 200 : 150; // Slower on mobile
     }
     
     restartGame() {
@@ -877,8 +881,9 @@ class SnakeGame {
 
             this.generateFood();
 
-            // Increase speed slightly
-            this.gameSpeed = Math.max(80, this.gameSpeed - 2);
+            // Increase speed slightly (slower max on mobile)
+            const minSpeed = this.isMobile ? 120 : 80;
+            this.gameSpeed = Math.max(minSpeed, this.gameSpeed - 2);
         } else {
             this.snake.pop();
         }
@@ -1417,4 +1422,15 @@ class SnakeGame {
 document.addEventListener('DOMContentLoaded', () => {
     new BackgroundParticles();
     new SnakeGame();
+
+    // Hide loading screen after everything is loaded
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+            setTimeout(() => {
+                loadingScreen.remove();
+            }, 500); // Remove after fade out animation
+        }
+    }, 500); // Small delay to ensure everything is rendered
 });

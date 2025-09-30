@@ -25,8 +25,74 @@
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- Inline CSS for instant loading screen (no FOUC) -->
+    <style>
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #loadingScreen h1 {
+            font-size: 3rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: loadingPulse 2s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: 'Space Mono', monospace;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading Screen - shows immediately -->
+    <div id="loadingScreen">
+        <h1>ŻmijAI</h1>
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Ładowanie gry...</p>
+    </div>
+
     <canvas id="backgroundCanvas"></canvas>
     <div class="game-container">
         <header class="game-header">
