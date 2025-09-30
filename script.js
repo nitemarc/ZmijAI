@@ -444,7 +444,7 @@ class SnakeGame {
         this.resizeCanvas();
 
         // Game settings
-        this.gridSize = this.isMobile ? 15 : 20;
+        this.gridSize = 20; // Always 20px for readability
         this.tileCount = {
             x: Math.floor(this.canvas.width / this.gridSize),
             y: Math.floor(this.canvas.height / this.gridSize)
@@ -524,6 +524,13 @@ class SnakeGame {
             this.currentOrientation = newOrientation;
 
             if (this.isMobile) {
+                // Show warning in landscape, hide in portrait
+                if (newOrientation === 'landscape') {
+                    this.showLandscapeWarning();
+                } else {
+                    this.hideLandscapeWarning();
+                }
+
                 this.resizeCanvas();
                 this.tileCount = {
                     x: Math.floor(this.canvas.width / this.gridSize),
@@ -540,25 +547,37 @@ class SnakeGame {
 
     resizeCanvas() {
         if (this.isMobile) {
-            const container = document.querySelector('.game-area');
-            const maxWidth = Math.min(window.innerWidth - 40, 500);
-            const maxHeight = Math.min(window.innerHeight * 0.5, 400);
-
-            // Maintain aspect ratio
-            const aspectRatio = 3 / 2;
-            let width = maxWidth;
-            let height = width / aspectRatio;
-
-            if (height > maxHeight) {
-                height = maxHeight;
-                width = height * aspectRatio;
-            }
-
-            this.canvas.width = Math.floor(width);
-            this.canvas.height = Math.floor(height);
+            // Square canvas: 360x360px (18x18 tiles at 20px each)
+            const canvasSize = Math.min(window.innerWidth - 40, 360);
+            this.canvas.width = canvasSize;
+            this.canvas.height = canvasSize;
         } else {
             this.canvas.width = 600;
             this.canvas.height = 400;
+        }
+    }
+
+    showLandscapeWarning() {
+        const warning = document.getElementById('landscapeWarning');
+        if (warning) {
+            warning.style.display = 'flex';
+        }
+        // Hide D-Pad
+        const dpad = document.getElementById('virtualDPad');
+        if (dpad) {
+            dpad.style.display = 'none';
+        }
+    }
+
+    hideLandscapeWarning() {
+        const warning = document.getElementById('landscapeWarning');
+        if (warning) {
+            warning.style.display = 'none';
+        }
+        // Show D-Pad
+        const dpad = document.getElementById('virtualDPad');
+        if (dpad) {
+            dpad.style.display = 'grid';
         }
     }
 
